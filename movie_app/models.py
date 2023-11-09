@@ -8,7 +8,7 @@ class Movie(db.Model):
     genres = db.relationship('Genre', secondary='movie_genre', backref='movies')
     actors = db.relationship('Actor', secondary='movie_actor', backref='movies')
     technicians = db.relationship('Technician', secondary='movie_technician', backref='movies')
-    is_visible = db.Column(db.Boolean, default=True)
+    is_visible = db.Column(db.Boolean, default=True) # this variable helps us in making it invisible instead of deleting
     def to_dict(self):
         return {
             'id': self.id,

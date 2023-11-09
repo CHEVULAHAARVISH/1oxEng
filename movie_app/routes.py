@@ -9,21 +9,62 @@ def hello_world():
 #eg url http://localhost:3000/movies
 @app.route('/movies', methods=['GET'])
 def get_all_movies():
-    movies = Movie.query.filter_by(is_visible=True).all()
+    movies = Movie.query.all()
     movie_list = [movie.to_dict() for movie in movies]
     return jsonify({'movies': movie_list})
 
+''' 
+Invisible method
+def get_all_movies():
+        movies = Movie.query.filter_by(is_visible=True).all()
+        movie_list = [movie.to_dict() for movie in movies]
+        return jsonify({'movies': movie_list})
+'''
 #api to movies by its id[GET]
 #eg url http://localhost:3000/movies/1
 @app.route('/movies/<int:movie_id>', methods=['GET'])
 def get_movie_by_id(movie_id):
     movie = Movie.query.get(movie_id)
-    if movie and movie.is_visible:
+    if movie:
         return jsonify(movie.to_dict())
     return jsonify({'error': 'Movie not found'}), 404
 
-# api to add a new movie[POST]
+'''
+Invisible Method
+def get_movie_by_id(movie_id):
+    movie = Movie.query.get(movie_id)
+    if movie and movie.is_visible:
+        return jsonify(movie.to_dict())
+    return jsonify({'error': 'Movie not found'}), 404'''
+#delete the actor if he is not associated in any movies
+@app.route('/actors/<string:actor_name>', methods=['DELETE'])
+def delete_actor(actor_name):
+    actor = Actor.query.filter_by(name=actor_name).first()
+    if actor:
+        if not actor.movies:
+            db.session.delete(actor)
+            db.session.commit()
+            return jsonify({'message': 'Actor deleted successfully'})
+        else:
+            movie_list = [movie.to_dict() for movie in actor.movies]
+            return jsonify({'error': 'Actor is associated with movies', 'movies': movie_list}), 400
+    return jsonify({'error': 'Actor not found'}), 404
 
+
+'''def delete_actor(actor_id):
+    actor = Actor.query.get(actor_id)
+    if actor:
+        visible_movies = [movie for movie in actor.movies if movie.is_visible]
+        if not visible_movies:
+            actor.is_visible = False
+            db.session.commit()
+            return jsonify({'message': 'Actor made invisible successfully'})
+        else:
+            movie_list = [movie.to_dict() for movie in visible_movies]
+            return jsonify({'error': 'Actor is associated with visible movies', 'movies': movie_list}), 400
+    return jsonify({'error': 'Actor not found'}), 404
+'''
+# api to add a new movie[POST]
 @app.route('/movies', methods=['POST'])
 def create_movie():
     data = request.get_json()
@@ -117,13 +158,30 @@ def get_all_moviesbycondi():
         'current_page': movies.page,
         'total_movies': movies.total
     })
-
+@app.route('/movies', methods=['DELETE'])
+def delete_all_movies():
+    movies = Movie.query.all()
+    for movie in movies:
+        db.session.delete(movie)
+    db.session.commit()
+    return jsonify({'message': 'All movies deleted successfully'})
 
 @app.route('/movies/<int:movie_id>', methods=['DELETE'])
 def delete_movie(movie_id):
+    movie = Movie.query.get(movie_id)
+    if movie:
+        db.session.delete(movie)
+        db.session.commit()
+        return jsonify({'message': 'Movie deleted successfully'})
+    return jsonify({'error': 'Movie not found'}), 404
+
+'''def delete_movie(movie_id):
     movie = Movie.query.get(movie_id)
     if movie:
         movie.is_visible = False
         db.session.commit()
         return jsonify({'message': 'Movie deleted successfully'})
     return jsonify({'error': 'Movie not found'}), 404
+'''
+
+'''Mentioned Alternate methods to make data disabled instead of deleting from db since it is bad practice'''
