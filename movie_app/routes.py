@@ -244,7 +244,7 @@ def delete_movie(movie_id):
         return jsonify({'message': 'Movie deleted successfully'})
     return jsonify({'error': 'Movie not found'}), 404
 '''
-#delete the actor if he is not associated in any movies
+#delete the actor if he is not associated in any moviess [delete route]
 @app.route('/actors/<string:actor_name>', methods=['DELETE'])
 def delete_actor(actor_name):
     try:
