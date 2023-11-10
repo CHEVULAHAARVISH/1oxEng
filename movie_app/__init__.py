@@ -3,7 +3,7 @@ from flask_sqlalchemy  import SQLAlchemy
 from flask_migrate import Migrate
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db' 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://haoounrilwyzlx:5e6b5a73db90a7a817e0177a0d4772c5898e6faab6af0d56854f52e7d39db79a@ec2-52-1-92-133.compute-1.amazonaws.com:5432/d49nsvu08hr5ea' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://wysxiyjypzwsha:5f1c36fc53f8a75cc88ec5974dfdc5774c85c25ea32a484a16bcefcd8db7e7e8@ec2-44-215-22-37.compute-1.amazonaws.com:5432/de3bolos0fletr'
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 from movie_app import routes
