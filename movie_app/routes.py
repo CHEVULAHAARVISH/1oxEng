@@ -37,7 +37,7 @@ def get_all_movies():
 #eg url http://localhost:3000/movies/1
 @app.route('/movies/<int:movie_id>', methods=['GET'])
 def get_movie_by_id(movie_id):
-    try:
+    try: #we are using this error handling such that even we dont give any id server doesnt break
         if movie_id is None:
             return jsonify({'status': 0, 'error': 'No movie ID provided in the request'}), 400
         movie = Movie.query.get(movie_id)
@@ -58,7 +58,7 @@ def get_movie_by_id(movie_id):
 #delete the actor if he is not associated in any movies
 @app.route('/actors/<string:actor_name>', methods=['DELETE'])
 def delete_actor(actor_name):
-    try:
+    try: #if we dont pass the proper actor server will not break like if we pass actor id or so 
         actor = Actor.query.filter_by(name=actor_name).first()
         if actor:
             if not actor.movies:
@@ -73,7 +73,8 @@ def delete_actor(actor_name):
     except Exception as e:
         return jsonify({'status': 0, 'error': str(e)}), 500
 
-'''def delete_actor(actor_id):
+'''Invisible Method
+def delete_actor(actor_id):
     actor = Actor.query.get(actor_id)
     if actor:
         visible_movies = [movie for movie in actor.movies if movie.is_visible]
@@ -88,11 +89,10 @@ def delete_actor(actor_name):
 '''
 
 
-
 # api to add a new movie[POST]
 @app.route('/movies', methods=['POST'])
 def create_movie():
-    try:
+    try: #do we have data to post or not
         data = request.get_json()
         if not data:
             return jsonify({'status': 0, 'error': 'No data provided in the request'}), 400
@@ -135,7 +135,6 @@ def create_movie():
         db.session.commit()
 
         return jsonify({'message': 'Movie created successfully'}), 201
-    
     except ValueError as ve:
         return jsonify({'status': 0, 'error': f'Invalid data: {ve}'}), 400
 
@@ -145,7 +144,7 @@ def create_movie():
 #api for updating movie with movie name did name for convience[PATCH]
 @app.route('/movies/<string:movie_name>', methods=['PATCH'])
 def update_movie(movie_name):
-    try:
+    try:#do we have data and is it validated 
         movie = Movie.query.filter_by(name=movie_name).first()
         if movie:
             data = request.get_json()
@@ -177,7 +176,7 @@ def update_movie(movie_name):
 #api to get movie with multiple or filters
 @app.route('/movie', methods=['GET'])
 def get_all_moviesbycondi():
-    try:
+    try:#if any other or different query passes server will not breeak instead throw the error
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
         actor = request.args.get('actor')
@@ -206,13 +205,13 @@ def get_all_moviesbycondi():
             'status': 1,
             'message': 'Success'
         })
-
     except ValueError as ve:
         return jsonify({'status': 0, 'error': f'Invalid data: {ve}'}), 400
-
     except Exception as e:
         return jsonify({'status': 0, 'error': str(e)}), 500
 
+
+#api route to delete all movies in data base
 @app.route('/movies', methods=['DELETE'])
 def delete_all_movies():
     try:   
@@ -223,9 +222,11 @@ def delete_all_movies():
         return jsonify({'message': 'All movies deleted successfully'})
     except Exception as e:
         return jsonify({'status': 0, 'error': str(e)}), 500
+    
+
 @app.route('/movies/<int:movie_id>', methods=['DELETE'])
 def delete_movie(movie_id):
-    try:
+    try:#are we getting proper movie id or not 
         movie = Movie.query.get(movie_id)
         if movie:
             # Check if the actor is not associated with any other movies
