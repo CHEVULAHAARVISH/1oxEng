@@ -1,3 +1,4 @@
-Flask==2.2.2
+Flask
 Flask_Migrate
 flask_sqlalchemy
+Gunicorn
